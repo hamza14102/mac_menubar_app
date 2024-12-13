@@ -4,7 +4,7 @@ import os
 import subprocess
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.1.1"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 class MenubarApp(rumps.App):
