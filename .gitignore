@@ -1,0 +1,11 @@
+# Byte-compiled files
+*.pyc
+*.pyo
+__pycache__/
+
+# Build directories
+build/
+dist/
+
+# macOS system files
+.DS_Store
