@@ -13,6 +13,18 @@ jobs:
         runs-on: macos-latest
 
         steps:
+            # Debug Step: Check if GITHUB_TOKEN is set
+            - name: Check GITHUB_TOKEN
+              run: |
+                  if [ -z "$GITHUB_TOKEN" ]; then
+                    echo "GITHUB_TOKEN is not set"
+                    exit 1
+                  else
+                    echo "GITHUB_TOKEN is set"
+                  fi
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
             # Step 1: Check out the code
             - name: Checkout code
               uses: actions/checkout@v2
@@ -38,18 +50,6 @@ jobs:
               run: |
                   brew install create-dmg
                   create-dmg --volname "Mac Menubar App" "dist/Mac Menubar App.dmg" "dist/Mac Menubar App.app"
-
-            # Debug Step: Check if GITHUB_TOKEN is set
-            - name: Check GITHUB_TOKEN
-              run: |
-                  if [ -z "$GITHUB_TOKEN" ]; then
-                    echo "GITHUB_TOKEN is not set"
-                    exit 1
-                  else
-                    echo "GITHUB_TOKEN is set"
-                  fi
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             # Step 6: Upload the release asset
             - name: Upload release asset
