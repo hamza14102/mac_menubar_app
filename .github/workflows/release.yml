@@ -1,36 +1,42 @@
 name: Build and Release
 
 on:
-    push:
-        tags:
-            - "v*" # Triggers workflow on version tags (e.g., v1.0.0)
+    release:
+        types:
+            - published # Triggers the workflow when a release is published
 
 jobs:
     build:
         runs-on: macos-latest
 
         steps:
+            # Check out the repository code
             - name: Checkout code
               uses: actions/checkout@v2
 
+            # Set up Python
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
                   python-version: 3.9
 
+            # Install dependencies
             - name: Install dependencies
               run: |
                   pip install --upgrade pip
                   pip install -r requirements.txt
 
+            # Build the macOS app
             - name: Build app
               run: python setup.py py2app
 
+            # Create the DMG file
             - name: Create DMG
               run: |
                   brew install create-dmg
                   create-dmg --volname "Mac Menubar App" "dist/Mac Menubar App.dmg" "dist/Mac Menubar App.app"
 
+            # Upload the DMG file as a release asset
             - name: Upload release asset
               uses: actions/upload-release-asset@v1
               with:
