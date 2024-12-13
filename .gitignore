@@ -9,3 +9,11 @@ dist/
 
 # macOS system files
 .DS_Store
+
+
+# Build artifacts
+build/
+dist/
+*.dmg
+*.app
+*.zip
