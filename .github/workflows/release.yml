@@ -3,40 +3,55 @@ name: Build and Release
 on:
     release:
         types:
-            - published # Triggers the workflow when a release is published
+            - published
+
+permissions:
+    contents: write # Ensure the token has write permissions to upload assets
 
 jobs:
     build:
         runs-on: macos-latest
 
         steps:
-            # Check out the repository code
+            # Step 1: Check out the code
             - name: Checkout code
               uses: actions/checkout@v2
 
-            # Set up Python
+            # Step 2: Set up Python environment
             - name: Set up Python
               uses: actions/setup-python@v2
               with:
                   python-version: 3.9
 
-            # Install dependencies
+            # Step 3: Install dependencies
             - name: Install dependencies
               run: |
                   pip install --upgrade pip
                   pip install -r requirements.txt
 
-            # Build the macOS app
+            # Step 4: Build the app
             - name: Build app
               run: python setup.py py2app
 
-            # Create the DMG file
+            # Step 5: Create the DMG file
             - name: Create DMG
               run: |
                   brew install create-dmg
                   create-dmg --volname "Mac Menubar App" "dist/Mac Menubar App.dmg" "dist/Mac Menubar App.app"
 
-            # Upload the DMG file as a release asset
+            # Debug Step: Check if GITHUB_TOKEN is set
+            - name: Check GITHUB_TOKEN
+              run: |
+                  if [ -z "$GITHUB_TOKEN" ]; then
+                    echo "GITHUB_TOKEN is not set"
+                    exit 1
+                  else
+                    echo "GITHUB_TOKEN is set"
+                  fi
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            # Step 6: Upload the release asset
             - name: Upload release asset
               uses: actions/upload-release-asset@v1
               with:
