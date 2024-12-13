@@ -29,7 +29,7 @@ jobs:
             - name: Create DMG
               run: |
                   brew install create-dmg
-                  create-dmg --volname "Mac Menubar App" --out "dist" "dist/Mac Menubar App.app"
+                  create-dmg --volname "Mac Menubar App" "dist/Mac Menubar App.dmg" "dist/Mac Menubar App.app"
 
             - name: Upload release asset
               uses: actions/upload-release-asset@v1
