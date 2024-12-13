@@ -1,0 +1,40 @@
+name: Build and Release
+
+on:
+    push:
+        tags:
+            - "v*" # Triggers workflow on version tags (e.g., v1.0.0)
+
+jobs:
+    build:
+        runs-on: macos-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: 3.9
+
+            - name: Install dependencies
+              run: |
+                  pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            - name: Build app
+              run: python setup.py py2app
+
+            - name: Create DMG
+              run: |
+                  brew install create-dmg
+                  create-dmg "dist/Mac Menubar App.app"
+
+            - name: Upload release asset
+              uses: actions/upload-release-asset@v1
+              with:
+                  upload_url: ${{ github.event.release.upload_url }}
+                  asset_path: dist/Mac\ Menubar\ App.dmg
+                  asset_name: Mac_Menubar_App.dmg
+                  asset_content_type: application/octet-stream
