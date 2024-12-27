@@ -2,6 +2,7 @@ import rumps
 import requests
 import os
 import subprocess
+import threading
 
 APP_NAME = "Menu App"
 APP_VERSION = "1.1.6"
@@ -37,7 +38,8 @@ class MenubarApp(rumps.App):
                 # prompt user to download and install the update
                 wants_update = rumps.alert("Update Available", f"Version {latest_version} is available. Do you want to download and install?", "Yes", "No") == 1
                 if wants_update:
-                    self.download_and_install_update(download_url)
+                    # wait for input alert window to close
+                    threading.Thread(target=self.download_and_install_update, args=(download_url,)).start()
             else:
                 rumps.notification(APP_NAME, "No Updates", "You are using the latest version.")
         except Exception as e:
