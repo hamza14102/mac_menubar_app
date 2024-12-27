@@ -4,7 +4,7 @@ import os
 import subprocess
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.1.4"
+APP_VERSION = "1.1.5"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 class MenubarApp(rumps.App):
@@ -35,7 +35,8 @@ class MenubarApp(rumps.App):
                 download_url = data["assets"][0]["browser_download_url"]
                 rumps.notification(APP_NAME, "Update Available!", f"Version {latest_version} is available.")
                 # prompt user to download and install the update
-                if rumps.alert("Update Available", f"Version {latest_version} is available. Do you want to download and install?", "Yes", "No") == 1:
+                wants_update = rumps.alert("Update Available", f"Version {latest_version} is available. Do you want to download and install?", "Yes", "No") == 1
+                if wants_update:
                     self.download_and_install_update(download_url)
             else:
                 rumps.notification(APP_NAME, "No Updates", "You are using the latest version.")
