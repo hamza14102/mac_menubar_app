@@ -5,16 +5,17 @@ import subprocess
 import threading
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.1.93"
+APP_VERSION = "1.1.10"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 class MenubarApp(rumps.App):
     def __init__(self):
         super().__init__("", icon="toolbox.png")
         self.menu = [
+            "Reply to Mail",
+            None,
             "About",
             "Check for Updates",
-            None,
             "Quit"
         ]
         self.quit_button = None
