@@ -4,7 +4,7 @@ import os
 import subprocess
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.1.1"
+APP_VERSION = "1.1.2"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 class MenubarApp(rumps.App):
@@ -50,6 +50,8 @@ class MenubarApp(rumps.App):
                         f.write(chunk)
             rumps.notification(APP_NAME, "Update Downloaded", "Launching the installer...")
             subprocess.run(["open", update_file])
+            # quit the app
+            rumps.quit_application()
         except Exception as e:
             rumps.alert("Error", f"Failed to download or install update: {e}")
 
