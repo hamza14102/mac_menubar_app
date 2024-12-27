@@ -34,7 +34,9 @@ class MenubarApp(rumps.App):
             if latest_version > APP_VERSION:
                 download_url = data["assets"][0]["browser_download_url"]
                 rumps.notification(APP_NAME, "Update Available!", f"Version {latest_version} is available.")
-                self.download_and_install_update(download_url)
+                # prompt user to download and install the update
+                if rumps.alert("Update Available", f"Version {latest_version} is available. Do you want to download and install?", "Yes", "No") == 1:
+                    self.download_and_install_update(download_url)
             else:
                 rumps.notification(APP_NAME, "No Updates", "You are using the latest version.")
         except Exception as e:
