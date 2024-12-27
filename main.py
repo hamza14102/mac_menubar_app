@@ -23,6 +23,17 @@ class MenubarApp(rumps.App):
     def about(self, _):
         rumps.alert(f"{APP_NAME}\nVersion: {APP_VERSION}\nA simple Mac Menubar App.")
 
+    
+    def is_version_newer(self, version1, version2):
+        version1 = version1.split(".")
+        version2 = version2.split(".")
+        for i in range(min(len(version1), len(version2))):
+            if int(version1[i]) > int(version2[i]):
+                return True
+            elif int(version1[i]) < int(version2[i]):
+                return False
+        return len(version1) > len(version2)
+
     @rumps.clicked("Check for Updates")
     def check_for_updates(self, _):
         rumps.notification(APP_NAME, "Checking for Updates...", "")
@@ -32,7 +43,7 @@ class MenubarApp(rumps.App):
             data = response.json()
 
             latest_version = data["tag_name"]
-            if latest_version > APP_VERSION:
+            if self.is_version_newer(latest_version, APP_VERSION):
                 download_url = data["assets"][0]["browser_download_url"]
                 rumps.notification(APP_NAME, "Update Available!", f"Version {latest_version} is available.")
                 # prompt user to download and install the update
