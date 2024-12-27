@@ -1,3 +1,5 @@
 rumps
 requests
 py2app
+openai
+pyperclip
