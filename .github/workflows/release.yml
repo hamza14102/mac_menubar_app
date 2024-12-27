@@ -50,7 +50,7 @@ jobs:
               run: |
                   brew install create-dmg
                   rm -f dist/*.dmg  # Ensure the output file doesn't already exist
-                  create-dmg --volname "Mac Menubar App" --app-drop-link "dist/Mac Menubar App.dmg" "dist/Mac Menubar App.app"
+                  create-dmg --volname "Mac Menubar App" --app-drop-link 400 100 "dist/Mac Menubar App.dmg" "dist/Mac Menubar App.app"
 
             # Step 6: Upload the release asset
             - name: Upload release asset
