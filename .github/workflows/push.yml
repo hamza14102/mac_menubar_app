@@ -1,0 +1,47 @@
+name: Create Release
+
+on:
+    push:
+        branches:
+            - main
+
+jobs:
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout Repository
+              uses: actions/checkout@v3
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: "3.x"
+
+            - name: Get previous and current APP_VERSION
+              id: get_versions
+              run: |
+                  git fetch origin main~1
+                  PREV_VERSION=$(grep APP_VERSION /Users/hamza/workdesk/update\ menubar\ app/main.py | awk -F '"' '{print $2}')
+                  CURRENT_VERSION=$(grep APP_VERSION /Users/hamza/workdesk/update\ menubar\ app/main.py | awk -F '"' '{print $2}')
+                  echo "::set-output name=prev::$PREV_VERSION"
+                  echo "::set-output name=curr::$CURRENT_VERSION"
+
+            - name: Check if APP_VERSION changed
+              id: version_check
+              run: |
+                  if [ "${{ steps.get_versions.outputs.prev }}" != "${{ steps.get_versions.outputs.curr }}" ]; then
+                    echo "VERSION_CHANGED=true" >> $GITHUB_ENV
+                  else
+                    echo "VERSION_CHANGED=false" >> $GITHUB_ENV
+                  fi
+
+            - name: Create GitHub Release
+              if: env.VERSION_CHANGED == 'true'
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ steps.get_versions.outputs.curr }}
+                  release_name: Release ${{ steps.get_versions.outputs.curr }}
+                  draft: false
+                  prerelease: false
