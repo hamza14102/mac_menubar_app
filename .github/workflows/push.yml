@@ -1,4 +1,4 @@
-name: Create Release
+name: Create Release on APP_VERSION change
 
 on:
     push:
@@ -6,48 +6,60 @@ on:
             - main
 
 jobs:
-    release:
+    create_release:
         runs-on: ubuntu-latest
         steps:
-            - name: Checkout Repository
+            - name: Check out the repository
               uses: actions/checkout@v3
-              with:
-                  fetch-depth: 0
 
             - name: Set up Python
               uses: actions/setup-python@v4
               with:
                   python-version: "3.x"
 
-            - name: Get previous and current APP_VERSION
-              id: get_versions
+            # Extract the new version from your Python file
+            - name: Get new APP_VERSION
+              id: get_new_version
               run: |
-                  PREV_VERSION=$(git show HEAD~1:main.py | grep APP_VERSION | awk -F '"' '{print $2}')
-                  CURRENT_VERSION=$(grep APP_VERSION main.py | awk -F '"' '{print $2}')
-                  echo "prev=$PREV_VERSION" >> $GITHUB_ENV
-                  echo "curr=$CURRENT_VERSION" >> $GITHUB_ENV
+                  import re
+                  import sys
 
-            - name: Validate APP_VERSION
+                  with open("main.py", "r") as f:
+                      content = f.read()
+
+                  match = re.search(r'APP_VERSION\s*=\s*"([^"]+)"', content)
+                  if not match:
+                      print("Could not find APP_VERSION in main.py.")
+                      sys.exit(1)
+
+                  version = match.group(1)
+                  print(f"::set-output name=version::{version}")
+
+            # Check if APP_VERSION changed in the last commit
+            # We'll look for "APP_VERSION" in the diff; if it's found, we assume a change occurred.
+            - name: Check diff for version change
+              id: diff_check
               run: |
-                  if [[ ! "$curr" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-                    echo "Invalid APP_VERSION format: $curr"
-                    exit 1
+                  set -e
+                  git fetch --depth=2 origin main
+                  DIFF_OUTPUT=$(git diff HEAD^ HEAD -- main.py | grep 'APP_VERSION' || true)
+                  if [ -z "$DIFF_OUTPUT" ]; then
+                    echo "No APP_VERSION changes found in the last commit."
+                    echo "::set-output name=changed::false"
+                  else
+                    echo "APP_VERSION change detected."
+                    echo "::set-output name=changed::true"
                   fi
 
-            - name: Check if APP_VERSION changed
-              run: |
-                  if [ "${{ env.prev }}" != "${{ env.curr }}" ]; then
-                    echo "VERSION_CHANGED=true" >> $GITHUB_ENV
-                  else
-                    echo "VERSION_CHANGED=false" >> $GITHUB_ENV
-
+            # Create a new release only if the version actually changed
             - name: Create GitHub Release
-              if: env.VERSION_CHANGED == 'true'
+              if: steps.diff_check.outputs.changed == 'true'
               uses: actions/create-release@v1
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  tag_name: ${{ env.curr }}
-                  release_name: Release ${{ env.curr }}
+                  tag_name: v${{ steps.get_new_version.outputs.version }}
+                  release_name: ${{ steps.get_new_version.outputs.version }}
+                  body: "Automatic release triggered by a change in APP_VERSION."
                   draft: false
                   prerelease: false
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
