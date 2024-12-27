@@ -4,7 +4,7 @@ APP = ['main.py']  # Your main Python script
 DATA_FILES = []  # Add any additional files if needed
 OPTIONS = {
     'argv_emulation': False,
-    'packages': ['rumps', 'requests'],
+    'packages': ['rumps', 'requests', 'pyperclip', 'openai'],
     'iconfile': 'toolbox.png',
     'plist': {
         'CFBundleName': 'Mac Menubar App',
