@@ -11,6 +11,8 @@ jobs:
         steps:
             - name: Checkout Repository
               uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
 
             - name: Set up Python
               uses: actions/setup-python@v4
@@ -20,16 +22,15 @@ jobs:
             - name: Get previous and current APP_VERSION
               id: get_versions
               run: |
-                  git fetch origin main~1
-                  PREV_VERSION=$(grep APP_VERSION /Users/hamza/workdesk/update\ menubar\ app/main.py | awk -F '"' '{print $2}')
-                  CURRENT_VERSION=$(grep APP_VERSION /Users/hamza/workdesk/update\ menubar\ app/main.py | awk -F '"' '{print $2}')
-                  echo "::set-output name=prev::$PREV_VERSION"
-                  echo "::set-output name=curr::$CURRENT_VERSION"
+                  PREV_VERSION=$(git show HEAD~1:main.py | grep APP_VERSION | awk -F '"' '{print $2}')
+                  CURRENT_VERSION=$(grep APP_VERSION main.py | awk -F '"' '{print $2}')
+                  echo "prev=$PREV_VERSION" >> $GITHUB_ENV
+                  echo "curr=$CURRENT_VERSION" >> $GITHUB_ENV
 
             - name: Check if APP_VERSION changed
               id: version_check
               run: |
-                  if [ "${{ steps.get_versions.outputs.prev }}" != "${{ steps.get_versions.outputs.curr }}" ]; then
+                  if [ "${{ env.prev }}" != "${{ env.curr }}" ]; then
                     echo "VERSION_CHANGED=true" >> $GITHUB_ENV
                   else
                     echo "VERSION_CHANGED=false" >> $GITHUB_ENV
@@ -41,7 +42,7 @@ jobs:
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
               with:
-                  tag_name: ${{ steps.get_versions.outputs.curr }}
-                  release_name: Release ${{ steps.get_versions.outputs.curr }}
+                  tag_name: ${{ env.curr }}
+                  release_name: Release ${{ env.curr }}
                   draft: false
                   prerelease: false
