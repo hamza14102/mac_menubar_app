@@ -5,7 +5,7 @@ import subprocess
 import threading
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.1.6"
+APP_VERSION = "1.1.7"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 class MenubarApp(rumps.App):
