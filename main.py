@@ -4,12 +4,12 @@ import os
 import subprocess
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.1.5"
+APP_VERSION = "1.1.6"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 class MenubarApp(rumps.App):
     def __init__(self):
-        super().__init__(APP_NAME)
+        super().__init__("", icon="toolbox.png")
         self.menu = [
             "About",
             "Check for Updates",

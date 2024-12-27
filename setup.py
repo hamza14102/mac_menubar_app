@@ -5,6 +5,7 @@ DATA_FILES = []  # Add any additional files if needed
 OPTIONS = {
     'argv_emulation': False,
     'packages': ['rumps', 'requests'],
+    'iconfile': 'toolbox.png',
     'plist': {
         'CFBundleName': 'Mac Menubar App',
         'CFBundleDisplayName': 'Mac Menubar App',
