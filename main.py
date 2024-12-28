@@ -7,7 +7,7 @@ from openai import OpenAI
 import pyperclip as pc
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.2.5"
+APP_VERSION = "1.2.6"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 def generate_response(email_content):
@@ -136,7 +136,12 @@ class MenubarApp(rumps.App):
 
     @rumps.clicked("Reply to Mail")
     def reply_to_mail(self, _):
+        pc.copy("")
         select_email_content_and_copy()
+        # verify if the copied content is not empty
+        if not pc.paste():
+            rumps.alert("Error", "No email content found. Please select an email to reply to.")
+            return
         email_content = pc.paste()
         response_content = generate_response(email_content)
         # verify the response content by checking if it doenst start with "An error occurred"
