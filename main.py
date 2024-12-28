@@ -7,7 +7,7 @@ from openai import OpenAI
 import pyperclip as pc
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.2.3"
+APP_VERSION = "1.2.4"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 def generate_response(email_content):
