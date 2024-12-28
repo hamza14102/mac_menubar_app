@@ -7,27 +7,37 @@ from openai import OpenAI
 import pyperclip as pc
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.2.6"
+APP_VERSION = "1.2.7"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 def generate_response(email_content):
+    # try:
+    #     client = OpenAI()
+    # except Exception as e:
+    #     return f"An error occurred: {str(e)}"
+    # prompt = f"Write a professional email response to the following:\n\n{email_content}"
+    # # print(prompt)
+    # completion = client.chat.completions.create(
+    #     model="gpt-4o-mini",
+    #     messages=[
+    #         {"role": "system", "content": "You are an AI assistant designed to generate professional, concise, and relevant email responses. The responses should be tailored based on the tone and content of the original email while maintaining a polite, respectful, and clear style. If the email requires a technical response, you should ensure the reply is precise and accurate. If needed, uou should consider the user's recent professional background, including their work with advanced AI technologies, software development practices, and their specific focus on creating custom neural networks and AI tools. Ensure that the email response follows a polite but efficient tone, reflecting the user's background and current professional endeavors. No need to provide the subject in your response."},
+    #         {
+    #             "role": "user",
+    #             "content": prompt
+    #         }
+    #     ]
+    # )
+    # return completion.choices[0].message.content
+
     try:
-        client = OpenAI()
+        url = "https://k1pp0e4b7k.execute-api.us-east-2.amazonaws.com/default/mailAppOpenAIWrapper"
+        headers = {"Content-Type": "application/json"}
+        data = {"prompt": email_content}
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        return response.json()
     except Exception as e:
         return f"An error occurred: {str(e)}"
-    prompt = f"Write a professional email response to the following:\n\n{email_content}"
-    # print(prompt)
-    completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": "You are an AI assistant designed to generate professional, concise, and relevant email responses. The responses should be tailored based on the tone and content of the original email while maintaining a polite, respectful, and clear style. If the email requires a technical response, you should ensure the reply is precise and accurate. If needed, uou should consider the user's recent professional background, including their work with advanced AI technologies, software development practices, and their specific focus on creating custom neural networks and AI tools. Ensure that the email response follows a polite but efficient tone, reflecting the user's background and current professional endeavors. No need to provide the subject in your response."},
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ]
-    )
-    return completion.choices[0].message.content
 
 def select_email_content_and_copy():
     script = '''
