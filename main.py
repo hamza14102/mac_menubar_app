@@ -7,7 +7,7 @@ from openai import OpenAI
 import pyperclip as pc
 
 APP_NAME = "Menu App"
-APP_VERSION = "1.2.2"
+APP_VERSION = "1.2.3"
 GITHUB_API_URL = "https://api.github.com/repos/hamza14102/mac_menubar_app/releases/latest"
 
 def generate_response(email_content):
@@ -102,8 +102,10 @@ class MenubarApp(rumps.App):
                 wants_update = rumps.alert("Update Available", f"Version {latest_version} is available. Do you want to download and install?", "Yes", "No") == 1
                 if wants_update:
                     # wait for input alert window to close
-                    # disable the quit button and the check for updates button
+                    # disable the check for updates button
                     self.menu["Check for Updates"].set_callback(None)
+                    # replace the check for updates button title with "Downloading..."
+                    self.menu["Check for Updates"].title = "Downloading..."
                     threading.Thread(target=self.download_and_install_update, args=(download_url,), daemon=True).start()
             else:
                 rumps.notification(APP_NAME, "No Updates", "You are using the latest version.")
